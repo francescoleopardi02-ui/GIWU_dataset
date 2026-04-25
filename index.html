@@ -22,6 +22,14 @@
             max-height: 80vh;
             overflow-y: auto;
             font-size: 13px;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        .leaflet-control-layers-overlays label {
+            display: block;
+            margin: 3px 0;
         }
         </style>
         <title></title>
@@ -18695,7 +18703,16 @@ var overlaysTree = [
     }
 ];
 
-L.control.layers.tree(null, overlaysTree, {collapsed: false, namedToggle: true}).addTo(map);
+var overlays = {};
+overlaysTree.forEach(function(group) {
+    var groupLayer = L.layerGroup();
+    group.children.forEach(function(child) {
+        groupLayer.addLayer(child.layer);
+    });
+    overlays["<b>" + group.label + "</b>"] = groupLayer;
+    groupLayer.addTo(map);
+});
+L.control.layers(null, overlays, {collapsed: false}).addTo(map);
 
         setBounds();
         </script>        
