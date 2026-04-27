@@ -355,7 +355,7 @@
         <script>
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[39.716824314566026,22.735366069780987],[39.72168843227203,22.74524339692345]]);
+        }).setView([30, 0], 3);
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {attribution: '© Esri'}).addTo(map);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
@@ -18762,6 +18762,7 @@ var overlaysTree = [
 
 var overlays = {};
 overlaysTree.forEach(function(group) {
+    if (group.label === "Greece") return;
     var groupLayer = L.layerGroup();
     group.children.forEach(function(child) {
         groupLayer.addLayer(child.layer);
@@ -18769,6 +18770,7 @@ overlaysTree.forEach(function(group) {
     overlays["<b>" + group.label + "</b>"] = groupLayer;
     groupLayer.addTo(map);
 });
+overlays["<b>Greece</b>"] = layer_Sectors_Fields_S09_S10_176;
 L.control.layers(null, overlays, {collapsed: false}).addTo(map);
 
         setBounds();
