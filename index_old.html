@@ -356,7 +356,7 @@
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
         }).setView([30, 0], 3);
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {attribution: '© Esri'}).addTo(map);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {attribution: '© Esri'}).addTo(map);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -426,7 +426,6 @@
         }).addTo(map);
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
-            if (bounds_group.getLayers().length > 0) { map.fitBounds(bounds_group.getBounds()); }
         }
         
         function pop_URGELL_SISTEMA_DEF_DISSOLTO_1(feature, layer) {
@@ -18773,43 +18772,6 @@ overlaysTree.forEach(function(group) {
 });
 overlays["<b>Greece</b>"] = layer_Sectors_Fields_S09_S10_176;
 L.control.layers(null, overlays, {collapsed: false}).addTo(map);
-
-map.on('overlayadd', function(e) {});
-
-// Add zoom buttons to layer control
-setTimeout(function() {
-    var labels = document.querySelectorAll('.leaflet-control-layers-overlays label');
-    labels.forEach(function(label) {
-        var span = label.querySelector('span');
-        if (span) {
-            var btn = document.createElement('span');
-            btn.innerHTML = ' &#128269;';
-            btn.style.cursor = 'pointer';
-            btn.style.fontSize = '14px';
-            btn.title = 'Zoom to layer';
-            btn.onclick = function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                var input = label.querySelector('input');
-                var layerName = span.textContent.trim();
-                for (var key in overlays) {
-                    var cleanKey = key.replace(/<\/?b>/g, '');
-                    if (cleanKey === layerName) {
-                        var layer = overlays[key];
-                        if (layer.getBounds) {
-                            map.fitBounds(layer.getBounds());
-                        } else if (layer.getLayers && layer.getLayers().length > 0) {
-                            var group = L.featureGroup(layer.getLayers());
-                            map.fitBounds(group.getBounds());
-                        }
-                        break;
-                    }
-                }
-            };
-            span.appendChild(btn);
-        }
-    });
-}, 1000);
 
         setBounds();
         </script>        
