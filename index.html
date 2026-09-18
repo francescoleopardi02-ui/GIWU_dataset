@@ -18894,39 +18894,54 @@ L.control.layers(null, overlays, {collapsed: false}).addTo(map);
 map.on('overlayadd', function(e) {});
 
 // Add zoom buttons to layer control
-setTimeout(function() {
-    var labels = document.querySelectorAll('.leaflet-control-layers-overlays label');
-    labels.forEach(function(label) {
-        var span = label.querySelector('span');
-        if (span) {
-            // read the name before the button is appended into the same span
-            var layerName = span.textContent.trim();
-            var btn = document.createElement('span');
-            btn.innerHTML = ' &#128269;';
-            btn.style.cursor = 'pointer';
-            btn.style.fontSize = '14px';
-            btn.title = 'Zoom to layer';
-            btn.onclick = function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                for (var key in overlays) {
-                    var cleanKey = key.replace(/<\/?b>/g, '');
-                    if (cleanKey === layerName) {
-                        var layer = overlays[key];
-                        if (layer.getBounds) {
-                            map.fitBounds(layer.getBounds());
-                        } else if (layer.getLayers && layer.getLayers().length > 0) {
-                            var group = L.featureGroup(layer.getLayers());
-                            map.fitBounds(group.getBounds());
-                        }
-                        break;
-                    }
-                }
-            };
-            span.appendChild(btn);
+var overlaysList = document.querySelector('.leaflet-control-layers-overlays');
+
+function boundsForOverlay(name) {
+    for (var key in overlays) {
+        if (key.replace(/<\/?b>/g, '') !== name) continue;
+        var layer = overlays[key];
+        if (layer.getBounds) return layer.getBounds();
+        if (layer.getLayers && layer.getLayers().length > 0) {
+            return L.featureGroup(layer.getLayers()).getBounds();
         }
+        return null;
+    }
+    return null;
+}
+
+// the name lives in its own span, so it stays readable after the button is appended
+function overlayNameOf(label) {
+    var holder = label.querySelector('span');
+    var nameSpan = holder && holder.querySelector('span');
+    return nameSpan ? nameSpan.textContent.trim() : '';
+}
+
+function addZoomButtons() {
+    overlaysList.querySelectorAll('label').forEach(function(label) {
+        var holder = label.querySelector('span');
+        if (!holder || holder.querySelector('.zoom-to-layer')) return;
+        var btn = document.createElement('span');
+        btn.className = 'zoom-to-layer';
+        btn.innerHTML = ' &#128269;';
+        btn.style.cursor = 'pointer';
+        btn.style.fontSize = '14px';
+        btn.title = 'Zoom to layer';
+        holder.appendChild(btn);
     });
-}, 1000);
+}
+
+// delegated, so it survives the control rebuilding its list on every layer change
+overlaysList.addEventListener('click', function(e) {
+    var btn = e.target.closest('.zoom-to-layer');
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    var bounds = boundsForOverlay(overlayNameOf(btn.closest('label')));
+    if (bounds && bounds.isValid()) { map.fitBounds(bounds); }
+});
+
+new MutationObserver(addZoomButtons).observe(overlaysList, {childList: true, subtree: true});
+addZoomButtons();
 
         setBounds();
         </script>
