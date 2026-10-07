@@ -19178,23 +19178,6 @@ var overlaysTree = [
         ]
     },
     {
-        label: "South Africa",
-        selectAllCheckbox: true,
-        children: [
-        {label: "TID 1889 shape", layer: layer_TID_1889_shape_138},
-        {label: "TID 958 shape", layer: layer_TID_958_shape_167},
-        {label: "TID 1016 shape", layer: layer_TID_1016_shape_168},
-        {label: "TID 1017 shape", layer: layer_TID_1017_shape_169},
-        {label: "TID 1434 shape", layer: layer_TID_1434_shape_170},
-        {label: "TID 1561 shape", layer: layer_TID_1561_shape_171},
-        {label: "TID 1621 shape", layer: layer_TID_1621_shape_172},
-        {label: "TID 1628 shape", layer: layer_TID_1628_shape_173},
-        {label: "TID 1729 shape", layer: layer_TID_1729_shape_174},
-        {label: "TID 1789 shape", layer: layer_TID_1789_shape_175},
-        {label: "TID 1885 shape", layer: layer_TID_1885_shape_176}
-        ]
-    },
-    {
         label: "Australia",
         selectAllCheckbox: true,
         children: [
@@ -19212,6 +19195,20 @@ var overlaysTree = [
         ]
     }
 ];
+// South Africa: excluded from the layer control, so also take them off the map
+// (qgis2web calls map.addLayer() per layer, outside the control)
+[layer_TID_1889_shape_138,
+ layer_TID_958_shape_167,
+ layer_TID_1016_shape_168,
+ layer_TID_1017_shape_169,
+ layer_TID_1434_shape_170,
+ layer_TID_1561_shape_171,
+ layer_TID_1621_shape_172,
+ layer_TID_1628_shape_173,
+ layer_TID_1729_shape_174,
+ layer_TID_1789_shape_175,
+ layer_TID_1885_shape_176].forEach(function(l) { if (map.hasLayer(l)) { map.removeLayer(l); } });
+
 var overlays = {};
 overlaysTree.forEach(function(group) {
     if (group.label === "Greece") return;
